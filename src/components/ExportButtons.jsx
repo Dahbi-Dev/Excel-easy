@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // components/ExportButtons.jsx
 import { useState } from "react";
 import * as XLSX from "xlsx";

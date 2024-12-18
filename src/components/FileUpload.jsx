@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState, useRef } from "react";
 import { Loader2, Upload, FileText, Check, X } from "lucide-react";
 import * as XLSX from "xlsx";

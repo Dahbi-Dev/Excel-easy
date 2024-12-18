@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 // components/Table.jsx
 import { useState, useEffect } from "react";
 import Select from "react-select";

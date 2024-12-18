@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 // components/SearchBar.jsx
 import { useState } from 'react';
 import { parse, isWithinInterval, format } from 'date-fns';

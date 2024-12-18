@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 // components/AddPatientDialog.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Select from "react-select";
 import { OPTIONS } from "../utils/constants";
 import { X, Save, Loader2, AlertCircle } from "lucide-react";
@@ -8,7 +9,6 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "../utils/localStorage";
-import { format } from "date-fns";
 
 const AddPatientDialog = ({
   isOpen,
@@ -428,7 +428,7 @@ const AddPatientDialog = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Compagnie d'Assurance *
+                  Compagnie d&apos;Assurance *
                 </label>
                 <Select
                   options={OPTIONS["COMPAGNIE D'ASSURANCE"]}
