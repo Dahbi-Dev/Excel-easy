@@ -1,18 +1,42 @@
 import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import FileUpload from "./components/FileUpload";
 import Table from "./components/Table";
 import SearchBar from "./components/SearchBar";
 import ExportButtons from "./components/ExportButtons";
 import ScrollButtons from "./components/ScrollButtons";
 import AddPatientDialog from "./components/AddPatientDialog";
+import AdminLogin from "./Admin/AdminLogin";
+import ProtectedRoute from "./Admin/ProtectedRoute";
 import { format } from "date-fns";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, LogOut } from "lucide-react";
 import { OPTIONS } from "./utils/constants";
 import {
   STORAGE_KEYS,
   saveToLocalStorage,
   getFromLocalStorage,
 } from "./utils/localStorage";
+
+// Logout Component
+const Logout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Remove authentication status
+    localStorage.removeItem("isAdminAuthenticated");
+    // Redirect to login page
+    navigate("/login");
+  }, [navigate]);
+
+  return null;
+};
 
 const App = () => {
   const [data, setData] = useState(() =>
@@ -23,31 +47,6 @@ const App = () => {
   );
   const [isTableLoading, setIsTableLoading] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [existingPatients, setExistingPatients] = useState([]);
-
-  // Update existing patients when data changes
-  useEffect(() => {
-    const uniquePatients = data.reduce((acc, patient) => {
-      const existingPatientIndex = acc.findIndex(
-        p => p.Nom === patient.Nom && 
-             p.Prenom === patient.Prenom && 
-             p["DATE DE NAISSANCE"] === patient["DATE DE NAISSANCE"]
-      );
-
-      if (existingPatientIndex === -1) {
-        acc.push({
-          Nom: patient.Nom,
-          Prenom: patient.Prenom,
-          "DATE DE NAISSANCE": patient["DATE DE NAISSANCE"],
-          "N° PIECE ID": patient["N° PIECE ID"]
-        });
-      }
-
-      return acc;
-    }, []);
-
-    setExistingPatients(uniquePatients);
-  }, [data]);
 
   useEffect(() => {
     saveToLocalStorage(STORAGE_KEYS.PATIENTS, data);
@@ -88,66 +87,109 @@ const App = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-3">
-            <Users className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-800">
-              Gestion des Rendez-vous
-            </h1>
-          </div>
-          <button
-            onClick={() => setShowAddDialog(true)}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Add New Patient</span>
-          </button>
-        </div>
+    <Router>
+      <Routes>
+        {/* Login Route */}
+        <Route path="/login" element={<AdminLogin />} />
 
-        <div className="space-y-6">
-          <SearchBar
-            data={data}
-            setData={setData}
-            originalData={originalData}
-            additionalFilters={{
-              Sexe: OPTIONS.Sexe,
-              "COMPAGNIE D'ASSURANCE": OPTIONS["COMPAGNIE D'ASSURANCE"],
-              AGENDA: OPTIONS.AGENDA,
-            }}
-          />
+        {/* Logout Route */}
+        <Route path="/logout" element={<Logout />} />
 
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-700">Import Data</h2>
-            <FileUpload
-              setData={setData}
-              setOriginalData={setOriginalData}
-              setIsTableLoading={setIsTableLoading}
-            />
-          </div>
+        {/* Protected Dashboard Route */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <div className="min-h-screen bg-gray-50 p-8">
+                <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6">
+                  {/* Header with Add Patient and Logout Buttons */}
+                  <div className="flex justify-between items-center mb-8">
+                    <div className="flex items-center space-x-3">
+                      <Users className="h-8 w-8 text-blue-600" />
+                      <h1 className="text-3xl font-bold text-gray-800">
+                        Gestion des Rendez-vous
+                      </h1>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() => setShowAddDialog(true)}
+                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2"
+                      >
+                        <Plus className="h-5 w-5" />
+                        <span>Add New Patient</span>
+                      </button>
+                      <Link
+                        to="/logout"
+                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2"
+                      >
+                        <LogOut className="h-5 w-5" />
+                        <span>Logout</span>
+                      </Link>
+                    </div>
+                  </div>
 
-          <Table
-            data={data}
-            setData={setData}
-            isLoading={isTableLoading}
-            onAddNew={() => setShowAddDialog(true)}
-          />
+                  {/* Main Dashboard Content */}
+                  <div className="space-y-6">
+                    {/* Search Bar */}
+                    <SearchBar
+                      data={data}
+                      setData={setData}
+                      originalData={originalData}
+                      additionalFilters={{
+                        Sexe: OPTIONS.Sexe,
+                        "COMPAGNIE D'ASSURANCE":
+                          OPTIONS["COMPAGNIE D'ASSURANCE"],
+                        AGENDA: OPTIONS.AGENDA,
+                      }}
+                    />
 
-          <ExportButtons data={data} />
-        </div>
+                    {/* File Upload Section */}
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold text-gray-700">
+                        Import Data
+                      </h2>
+                      <FileUpload
+                        setData={setData}
+                        setOriginalData={setOriginalData}
+                        setIsTableLoading={setIsTableLoading}
+                      />
+                    </div>
 
-        <AddPatientDialog
-          isOpen={showAddDialog}
-          onClose={() => setShowAddDialog(false)}
-          onSubmit={handleAddNewPatient}
-          initialData={getInitialPatientData()}
-          existingPatients={existingPatients}
+                    {/* Patient Table */}
+                    <Table
+                      data={data}
+                      setData={setData}
+                      isLoading={isTableLoading}
+                      onAddNew={() => setShowAddDialog(true)}
+                    />
+
+                    {/* Export Buttons */}
+                    <ExportButtons data={data} />
+                  </div>
+
+                  {/* Add Patient Dialog */}
+                  <AddPatientDialog
+                    isOpen={showAddDialog}
+                    onClose={() => setShowAddDialog(false)}
+                    onSubmit={handleAddNewPatient}
+                    initialData={getInitialPatientData()}
+                  />
+
+                  {/* Scroll Buttons */}
+                  <ScrollButtons />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
         />
 
-        <ScrollButtons />
-      </div>
-    </div>
+        {/* Root Route Redirect */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+        {/* Catch-all Route to Redirect to Login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
   );
 };
 
