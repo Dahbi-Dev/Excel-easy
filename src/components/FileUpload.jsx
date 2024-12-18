@@ -1,6 +1,3 @@
-/* eslint-disable react/prop-types */
-// components/FileUpload.jsx
-// components/FileUpload.jsx
 import { useState, useRef } from "react";
 import { Loader2, Upload, FileText, Check, X } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -8,14 +5,15 @@ import * as XLSX from "xlsx";
 const FileUpload = ({ setData, setOriginalData, setIsTableLoading }) => {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState("");
-  const [uploadStatus, setUploadStatus] = useState(null); // 'success' | 'error' | null
+  const [uploadStatus, setUploadStatus] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setIsTableLoading(true); // Set table loading state
+    setLoading(true);
+    setIsTableLoading(true);
     setFileName(file.name);
     setUploadStatus(null);
 
@@ -24,17 +22,26 @@ const FileUpload = ({ setData, setOriginalData, setIsTableLoading }) => {
 
       reader.onload = async (event) => {
         try {
-          // Simulate network delay
           await new Promise((resolve) => setTimeout(resolve, 1000));
 
           const workbook = XLSX.read(event.target.result, { type: "binary" });
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
-          const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+          const json = XLSX.utils.sheet_to_json(sheet, {
+            header: 1,
+            raw: false,
+            dateNF: "dd/mm/yyyy",
+          });
 
-          const formattedData = json.slice(1).map((row, idx) => ({
+          // Skip empty rows and get headers from the first row
+          const headers = json[0];
+          const dataRows = json
+            .slice(1)
+            .filter((row) => row.some((cell) => cell));
+
+          const formattedData = dataRows.map((row, idx) => ({
             "DATE DE CONSULTATION": row[0] || "",
-            "N° IPP": idx + 1,
+            "N° IPP": row[1] || (idx + 1).toString(),
             Nom: row[2] || "",
             Prenom: row[3] || "",
             Sexe: row[4] || "",
@@ -59,22 +66,25 @@ const FileUpload = ({ setData, setOriginalData, setIsTableLoading }) => {
           console.error("Error processing file:", error);
           setUploadStatus("error");
         } finally {
-          setIsTableLoading(false); // End table loading state
+          setIsTableLoading(false);
         }
       };
 
       reader.onerror = () => {
         setUploadStatus("error");
+        setIsTableLoading(false);
       };
 
       reader.readAsBinaryString(file);
     } catch (error) {
       console.error("Error reading file:", error);
-      setIsTableLoading(false); // End table loading state
+      setUploadStatus("error");
+      setIsTableLoading(false);
     } finally {
       setLoading(false);
     }
   };
+
   const handleReset = () => {
     setFileName("");
     setUploadStatus(null);
@@ -101,12 +111,12 @@ const FileUpload = ({ setData, setOriginalData, setIsTableLoading }) => {
 
           <div className="text-center">
             <h3 className="text-lg font-medium text-gray-900">
-              Upload Excel File
+              Import Patient Data
             </h3>
             <p className="text-sm text-gray-500 mt-1">
               {loading
                 ? "Processing file..."
-                : "Upload your Excel file to import data"}
+                : "Upload your Excel file to import patient records"}
             </p>
           </div>
 

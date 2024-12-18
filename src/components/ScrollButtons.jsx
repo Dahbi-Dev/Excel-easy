@@ -1,4 +1,3 @@
-// components/ScrollButtons.jsx
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
 const ScrollButtons = () => {
