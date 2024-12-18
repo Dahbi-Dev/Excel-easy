@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, User, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lock, User, AlertCircle } from "lucide-react";
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Use environment variables for admin credentials
     if (
-      username === import.meta.env.VITE_ADMIN_USERNAME && 
+      username === import.meta.env.VITE_ADMIN_USERNAME &&
       password === import.meta.env.VITE_ADMIN_PASSWORD
     ) {
       // Store login state in localStorage
-      localStorage.setItem('isAdminAuthenticated', 'true');
-      navigate('/dashboard');
+      localStorage.setItem("isAdminAuthenticated", "true");
+      navigate("/dashboard");
     } else {
-      setError('Invalid username or password');
+      setError("Invalid username or password");
     }
   };
 
@@ -37,7 +37,9 @@ const AdminLogin = () => {
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">Username</label>
+              <label htmlFor="username" className="sr-only">
+                Username
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
@@ -55,7 +57,9 @@ const AdminLogin = () => {
               </div>
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
