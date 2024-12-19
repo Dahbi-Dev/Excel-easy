@@ -12,7 +12,7 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "../utils/localStorage";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const Table = ({ data, setData, isLoading, onAddNew }) => {
   const [editingRow, setEditingRow] = useState(null);
