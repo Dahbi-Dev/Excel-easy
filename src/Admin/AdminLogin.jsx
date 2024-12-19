@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, User, AlertCircle, Eye, EyeOff } from "lucide-react";
 
@@ -8,6 +8,14 @@ const AdminLogin = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAdminAuthenticated") === "true";
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
