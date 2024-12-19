@@ -23,6 +23,7 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "./utils/localStorage";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Logout Component
 const Logout = () => {
@@ -204,6 +205,7 @@ const App = () => {
           </Routes>
         </Router>
       </div>
+      <SpeedInsights/>
     </div>
   );
 };

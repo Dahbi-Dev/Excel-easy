@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^1.1.0",
     "date-fns": "^4.1.0",
     "excel-easy": "file:",
     "file-saver": "^2.0.5",
