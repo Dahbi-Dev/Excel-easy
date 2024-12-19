@@ -12,6 +12,7 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "../utils/localStorage";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const Table = ({ data, setData, isLoading, onAddNew }) => {
   const [editingRow, setEditingRow] = useState(null);
@@ -175,6 +176,8 @@ const Table = ({ data, setData, isLoading, onAddNew }) => {
 
   return (
     <div className="relative flex flex-col space-y-4">
+            <SpeedInsights />
+
       <div className="flex-1 border border-gray-200 rounded-lg overflow-hidden bg-white shadow">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">

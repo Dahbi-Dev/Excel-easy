@@ -205,7 +205,7 @@ const App = () => {
           </Routes>
         </Router>
       </div>
-      <SpeedInsights/>
+      <SpeedInsights />
     </div>
   );
 };
