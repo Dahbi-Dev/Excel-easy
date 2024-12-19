@@ -23,7 +23,8 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "./utils/localStorage";
-import { SpeedInsights } from "@vercel/speed-insights/react";
+import { SpeedInsights } from "@vercel/speed-insights/react"
+
 
 // Logout Component
 const Logout = () => {
@@ -40,6 +41,9 @@ const Logout = () => {
 };
 
 const App = () => {
+
+ ;
+
   const [data, setData] = useState(() =>
     getFromLocalStorage(STORAGE_KEYS.PATIENTS, [])
   );
@@ -205,8 +209,8 @@ const App = () => {
           </Routes>
         </Router>
       </div>
-      <SpeedInsights />
-    </div>
+      <SpeedInsights/>
+      </div>
   );
 };
 

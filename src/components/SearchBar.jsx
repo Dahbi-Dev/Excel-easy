@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import { parse, isWithinInterval, format } from 'date-fns';
 import { Search, Loader2, Filter, X } from 'lucide-react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 // import { OPTIONS } from "./utils/constants";
 
 
@@ -159,7 +158,6 @@ const SearchBar = ({
 
   return (
     <div className="mb-8 space-y-4">
-            <SpeedInsights />
 
       <div className="flex gap-4">
         <div className="flex-1 relative">
