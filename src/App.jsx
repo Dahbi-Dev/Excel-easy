@@ -16,7 +16,7 @@ import AddPatientDialog from "./components/AddPatientDialog";
 import AdminLogin from "./Admin/AdminLogin";
 import ProtectedRoute from "./Admin/ProtectedRoute";
 import { format } from "date-fns";
-import { Plus, Users, LogOut } from "lucide-react";
+import { Plus, Users, LogOut, Monitor, EyeOff } from "lucide-react";
 import { OPTIONS } from "./utils/constants";
 import {
   STORAGE_KEYS,
@@ -87,109 +87,124 @@ const App = () => {
   });
 
   return (
-    <Router>
-      <Routes>
-        {/* Login Route */}
-        <Route path="/login" element={<AdminLogin />} />
+    <div>
+      {/* <!-- Visible on mobile, hidden on desktop --> */}
+     
+<div className="block md:hidden min-h-screen flex items-center justify-center">
+  <div className="p-4 bg-gray-100 rounded-lg shadow-sm">
+    <div className="flex items-center gap-3 text-gray-600">
+      <Monitor className="w-5 h-5" />
+      <p className="font-medium">Open Desktop to show</p>
+      <EyeOff className="w-4 h-4 ml-auto" />
+    </div>
+  </div>
+</div>
+      <div className="hidden md:block">
+        <Router>
+          <Routes>
+            {/* Login Route */}
+            <Route path="/login" element={<AdminLogin />} />
 
-        {/* Logout Route */}
-        <Route path="/logout" element={<Logout />} />
+            {/* Logout Route */}
+            <Route path="/logout" element={<Logout />} />
 
-        {/* Protected Dashboard Route */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen bg-gray-50 p-8">
-                <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6">
-                  {/* Header with Add Patient and Logout Buttons */}
-                  <div className="flex justify-between items-center mb-8">
-                    <div className="flex items-center space-x-3">
-                      <Users className="h-8 w-8 text-blue-600" />
-                      <h1 className="text-3xl font-bold text-gray-800">
-                        Gestion des Rendez-vous
-                      </h1>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={() => setShowAddDialog(true)}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2"
-                      >
-                        <Plus className="h-5 w-5" />
-                        <span>Add New Patient</span>
-                      </button>
-                      <Link
-                        to="/logout"
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2"
-                      >
-                        <LogOut className="h-5 w-5" />
-                        <span>Logout</span>
-                      </Link>
-                    </div>
-                  </div>
+            {/* Protected Dashboard Route */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <div className="min-h-screen bg-gray-50 p-8">
+                    <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-6">
+                      {/* Header with Add Patient and Logout Buttons */}
+                      <div className="flex justify-between items-center mb-8">
+                        <div className="flex items-center space-x-3">
+                          <Users className="h-8 w-8 text-blue-600" />
+                          <h1 className="text-3xl font-bold text-gray-800">
+                            Gestion des Rendez-vous
+                          </h1>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <button
+                            onClick={() => setShowAddDialog(true)}
+                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2"
+                          >
+                            <Plus className="h-5 w-5" />
+                            <span>Add New Patient</span>
+                          </button>
+                          <Link
+                            to="/logout"
+                            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2"
+                          >
+                            <LogOut className="h-5 w-5" />
+                            <span>Logout</span>
+                          </Link>
+                        </div>
+                      </div>
 
-                  {/* Main Dashboard Content */}
-                  <div className="space-y-6">
-                    {/* Search Bar */}
-                    <SearchBar
-                      data={data}
-                      setData={setData}
-                      originalData={originalData}
-                      additionalFilters={{
-                        Sexe: OPTIONS.Sexe,
-                        "COMPAGNIE D'ASSURANCE":
-                          OPTIONS["COMPAGNIE D'ASSURANCE"],
-                        AGENDA: OPTIONS.AGENDA,
-                      }}
-                    />
+                      {/* Main Dashboard Content */}
+                      <div className="space-y-6">
+                        {/* Search Bar */}
+                        <SearchBar
+                          data={data}
+                          setData={setData}
+                          originalData={originalData}
+                          additionalFilters={{
+                            Sexe: OPTIONS.Sexe,
+                            "COMPAGNIE D'ASSURANCE":
+                              OPTIONS["COMPAGNIE D'ASSURANCE"],
+                            AGENDA: OPTIONS.AGENDA,
+                          }}
+                        />
 
-                    {/* File Upload Section */}
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold text-gray-700">
-                        Import Data
-                      </h2>
-                      <FileUpload
-                        setData={setData}
-                        setOriginalData={setOriginalData}
-                        setIsTableLoading={setIsTableLoading}
+                        {/* File Upload Section */}
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-lg font-semibold text-gray-700">
+                            Import Data
+                          </h2>
+                          <FileUpload
+                            setData={setData}
+                            setOriginalData={setOriginalData}
+                            setIsTableLoading={setIsTableLoading}
+                          />
+                        </div>
+
+                        {/* Patient Table */}
+                        <Table
+                          data={data}
+                          setData={setData}
+                          isLoading={isTableLoading}
+                          onAddNew={() => setShowAddDialog(true)}
+                        />
+
+                        {/* Export Buttons */}
+                        <ExportButtons data={data} />
+                      </div>
+
+                      {/* Add Patient Dialog */}
+                      <AddPatientDialog
+                        isOpen={showAddDialog}
+                        onClose={() => setShowAddDialog(false)}
+                        onSubmit={handleAddNewPatient}
+                        initialData={getInitialPatientData()}
                       />
+
+                      {/* Scroll Buttons */}
+                      <ScrollButtons />
                     </div>
-
-                    {/* Patient Table */}
-                    <Table
-                      data={data}
-                      setData={setData}
-                      isLoading={isTableLoading}
-                      onAddNew={() => setShowAddDialog(true)}
-                    />
-
-                    {/* Export Buttons */}
-                    <ExportButtons data={data} />
                   </div>
+                </ProtectedRoute>
+              }
+            />
 
-                  {/* Add Patient Dialog */}
-                  <AddPatientDialog
-                    isOpen={showAddDialog}
-                    onClose={() => setShowAddDialog(false)}
-                    onSubmit={handleAddNewPatient}
-                    initialData={getInitialPatientData()}
-                  />
+            {/* Root Route Redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                  {/* Scroll Buttons */}
-                  <ScrollButtons />
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Root Route Redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-        {/* Catch-all Route to Redirect to Login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+            {/* Catch-all Route to Redirect to Login */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Router>
+      </div>
+    </div>
   );
 };
 
